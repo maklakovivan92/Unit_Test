@@ -1,24 +1,112 @@
 from main import BooksCollector
 
-# класс TestBooksCollector объединяет набор тестов, которыми мы покрываем наше приложение BooksCollector
-# обязательно указывать префикс Test
 class TestBooksCollector:
-
-    # пример теста:
-    # обязательно указывать префикс test_
-    # дальше идет название метода, который тестируем add_new_book_
-    # затем, что тестируем add_two_books - добавление двух книг
-    def test_add_new_book_add_two_books(self):
-        # создаем экземпляр (объект) класса BooksCollector
+    def test_add_new_book_to_books_genre(self):
         collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        collector.add_new_book(book_name)
+        books = collector.get_books_genre()
+        assert book_name in books and books[book_name] == ''
 
-        # добавляем две книги
-        collector.add_new_book('Гордость и предубеждение и зомби')
-        collector.add_new_book('Что делать, если ваш кот хочет вас убить')
+    def test_add_new_book_long_name_to_books_genre(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер Гарри Поттер Гарри Поттер Гарри Поттер'
+        collector.add_new_book(book_name)
+        books = collector.get_books_genre()
+        assert book_name not in books
 
-        # проверяем, что добавилось именно две
-        # словарь books_rating, который нам возвращает метод get_books_rating, имеет длину 2
-        assert len(collector.get_books_rating()) == 2
+    def test_set_book_genre_true(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        genre = 'Фантастика'
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, genre)
+        books = collector.get_books_genre()
+        assert books[book_name] == genre
 
-    # напиши свои тесты ниже
-    # чтобы тесты были независимыми в каждом из них создавай отдельный экземпляр класса BooksCollector()
+    def test_set_book_genre_invalid_genre(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        genre = 'Опера'
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, genre)
+        books = collector.get_books_genre()
+        assert books[book_name] != genre
+
+    def test_get_book_genre_returns_correct_genre(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        genre = 'Фантастика'
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, genre)
+        book = collector.get_book_genre(book_name)
+        assert book == genre
+
+    def test_get_books_with_specific_genre_ret_books(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        genre = 'Фантастика'
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, genre)
+        book = collector.get_books_with_specific_genre(genre)
+        assert book == [book_name]
+
+    def test_get_books_genre_returns_dict(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        genre = 'Фантастика'
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, genre)
+        book = collector.get_books_genre()
+        assert book == {book_name: genre}
+
+    def test_get_books_for_children_excludes_age_rating_genres(self):
+        collector = BooksCollector()
+        book_name_1 = 'Гарри Поттер'
+        genre_1 = 'Фантастика'
+        book_name_2 = 'Пила'
+        genre_2 = 'Ужасы'
+        collector.add_new_book(book_name_1)
+        collector.add_new_book(book_name_2)
+        collector.set_book_genre(book_name_1, genre_1)
+        collector.set_book_genre(book_name_2, genre_2)
+        book = collector.get_books_for_children()
+        assert book == [book_name_1]
+
+    def test_add_book_in_favorites_success(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        genre = 'Фантастика'
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, genre)
+        collector.add_book_in_favorites(book_name)
+        book = collector.get_list_of_favorites_books()
+        assert book == [book_name]
+
+    def test_add_book_in_favorites_does_nothing_if_book_not_exists(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        collector.add_book_in_favorites(book_name)
+        book = collector.get_list_of_favorites_books()
+        assert book_name not in book
+
+    def test_delete_book_from_favorites_books_removes_book(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        genre = 'Фантастика'
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, genre)
+        collector.add_book_in_favorites(book_name)
+        collector.delete_book_from_favorites(book_name)
+        book = collector.get_list_of_favorites_books()
+        assert book_name not in book
+
+    def test_get_list_of_favorites_books_returns_favorites(self):
+        collector = BooksCollector()
+        book_name = 'Гарри Поттер'
+        genre = 'Фантастика'
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, genre)
+        collector.add_book_in_favorites(book_name)
+        book = collector.get_list_of_favorites_books()
+        assert book == [book_name]
