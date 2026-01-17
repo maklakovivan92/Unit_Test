@@ -108,3 +108,10 @@ def test_get_list_of_favorites_books_returns_favorites(collector):
     collector.add_book_in_favorites(book_name)
     book = collector.get_list_of_favorites_books()
     assert book == [book_name]
+
+import pytest
+
+@pytest.mark.parametrize("book_name", ["", "A" * 41])
+def test_add_new_book_invalid_length_not_added(collector, book_name):
+    collector.add_new_book(book_name)
+    assert book_name not in collector.get_books_genre()
